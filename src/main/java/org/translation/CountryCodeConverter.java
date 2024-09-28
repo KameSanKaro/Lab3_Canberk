@@ -4,10 +4,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-// TODO CheckStyle: Wrong lexicographical order for 'java.util.HashMap' import (remove this comment once resolved)
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This class provides the service of converting country codes to their names.
@@ -15,6 +14,7 @@ import java.util.Map;
 public class CountryCodeConverter {
 
     // TODO Task: pick appropriate instance variable(s) to store the data necessary for this class
+    private ArrayList<ArrayList<String>> countryData = new ArrayList<>();
 
     /**
      * Default constructor which will load the country codes from "country-codes.txt"
@@ -34,9 +34,12 @@ public class CountryCodeConverter {
         try {
             List<String> lines = Files.readAllLines(Paths.get(getClass()
                     .getClassLoader().getResource(filename).toURI()));
-
             // TODO Task: use lines to populate the instance variable(s)
-
+            for (String line : lines) {
+                String[] spl = line.split("\t");
+                ArrayList<String> spl2 = new ArrayList<>(Arrays.asList(spl));
+                countryData.add(spl2);
+            }
         }
         catch (IOException | URISyntaxException ex) {
             throw new RuntimeException(ex);
@@ -51,7 +54,12 @@ public class CountryCodeConverter {
      */
     public String fromCountryCode(String code) {
         // TODO Task: update this code to use an instance variable to return the correct value
-        return code;
+        for (ArrayList<String> countryDatum : countryData) {
+            if (countryDatum.get(2).toLowerCase().equals(code)) {
+                return countryDatum.get(0);
+            }
+        }
+        return "Country not found";
     }
 
     /**
@@ -61,7 +69,12 @@ public class CountryCodeConverter {
      */
     public String fromCountry(String country) {
         // TODO Task: update this code to use an instance variable to return the correct value
-        return country;
+        for (ArrayList<String> countryDatum : countryData) {
+            if (countryDatum.get(0).equals(country)) {
+                return countryDatum.get(2).toLowerCase();
+            }
+        }
+        return "Country not found";
     }
 
     /**
@@ -70,6 +83,6 @@ public class CountryCodeConverter {
      */
     public int getNumCountries() {
         // TODO Task: update this code to use an instance variable to return the correct value
-        return 0;
+        return countryData.size() - 1;
     }
 }

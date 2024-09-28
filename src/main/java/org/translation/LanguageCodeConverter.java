@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This class provides the service of converting language codes to their names.
@@ -14,6 +14,7 @@ import java.util.Map;
 public class LanguageCodeConverter {
 
     // TODO Task: pick appropriate instance variables to store the data necessary for this class
+    private ArrayList<ArrayList<String>> languageData = new ArrayList<>();
 
     /**
      * Default constructor which will load the language codes from "language-codes.txt"
@@ -36,9 +37,13 @@ public class LanguageCodeConverter {
 
             // TODO Task: use lines to populate the instance variable
             //           tip: you might find it convenient to create an iterator using lines.iterator()
-
-        // TODO Checkstyle: '}' on next line should be alone on a line.
-        } catch (IOException | URISyntaxException ex) {
+            for (String line : lines) {
+                String[] spl = line.split("\t");
+                ArrayList<String> spl2 = new ArrayList<>(Arrays.asList(spl));
+                languageData.add(spl2);
+            }
+        }
+        catch (IOException | URISyntaxException ex) {
             throw new RuntimeException(ex);
         }
 
@@ -51,7 +56,12 @@ public class LanguageCodeConverter {
      */
     public String fromLanguageCode(String code) {
         // TODO Task: update this code to use your instance variable to return the correct value
-        return code;
+        for (ArrayList<String> countryDatum : languageData) {
+            if (countryDatum.get(countryDatum.size() - 1).toLowerCase().equals(code)) {
+                return countryDatum.get(0);
+            }
+        }
+        return "Country not found";
     }
 
     /**
@@ -61,7 +71,14 @@ public class LanguageCodeConverter {
      */
     public String fromLanguage(String language) {
         // TODO Task: update this code to use your instance variable to return the correct value
-        return language;
+        for (ArrayList<String> countryDatum : languageData) {
+            for (String field : countryDatum) {
+                if (field.equals(language)) {
+                    return countryDatum.get(countryDatum.size() - 1).toLowerCase();
+                }
+            }
+        }
+        return "Country not found";
     }
 
     /**
@@ -70,6 +87,6 @@ public class LanguageCodeConverter {
      */
     public int getNumLanguages() {
         // TODO Task: update this code to use your instance variable to return the correct value
-        return 0;
+        return languageData.size() - 1;
     }
 }
